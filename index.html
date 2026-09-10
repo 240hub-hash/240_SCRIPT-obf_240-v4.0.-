@@ -193,7 +193,6 @@
         </footer>
     </div>
 
-    <!-- Security Trap Screen (Alternate UI when F12 or DevTools shortcut is triggered) -->
     <div id="trapScreen" class="fixed inset-0 z-50 bg-darker flex flex-col items-center justify-center p-6 hidden">
         <div class="absolute inset-0 pointer-events-none overflow-hidden">
             <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-3xl"></div>
@@ -255,24 +254,28 @@
     </div>
 
     <script>
-        // Block Right-Click Context Menu
+        // Block Right-Click Context Menu with aggressive capture
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             showToast("ระบบความปลอดภัย: ไม่อนุญาตให้คลิกขวา");
             return false;
-        });
+        }, { capture: true });
 
-        // Trigger Trap Screen when F12 or DevTools Shortcuts are pressed
-        document.addEventListener('keydown', function(e) {
+        // Aggressive DevTools & F12 Shortcut Blocking (Capture Phase everywhere including inputs/textareas)
+        function checkDevTools(e) {
             if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
-                (e.ctrlKey && e.key === 'u') ||
-                (e.ctrlKey && e.key === 's')) {
+                e.keyCode === 123 ||
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) || 
+                (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))) {
                 e.preventDefault();
+                e.stopPropagation();
                 activateTrapScreen();
                 return false;
             }
-        });
+        }
+
+        window.addEventListener('keydown', checkDevTools, { capture: true });
+        document.addEventListener('keydown', checkDevTools, { capture: true });
 
         function activateTrapScreen() {
             document.getElementById('mainContainer').classList.add('hidden');
@@ -436,11 +439,11 @@
             const bottomDecoys = generateBottomDecoys(200);
 
             const asciiArt = `--[[
- ██████╗ ██████╗ ███████╗    ██╗  ██╗    ██╗  ██╗    ██████╗ ██╗   ██╗    ██████╗ ██╗  ██╗ ██████╗ 
-██╔═══██╗██╔══██╗██╔════╝    ██║  ██║    ██║  ██║    ██╔══██╗╚██╗ ██╔╝    ╚════██╗██║  ██║██╔═══██╗
-██║   ██║██████╔╝█████╗      ██║  ██║    ███████║    ██████╔╝ ╚████╔╝      █████╔╝███████║██║   ██║
-██║   ██║██╔══██╗██╔══╝      ╚██╗██╔╝    ╚════██║    ██╔══██╗  ╚██╔╝      ██╔═══╝ ╚██║  ██║██║   ██║
-╚██████╔╝██████╔╝██║          ╚███╔╝          ██║    ██████╔╝   ██║       ███████╗     ██║╚██████╔╝
+ ██████╗ ███████╗    ██╗  ██╗    ██╗  ██╗    ██████╗ ██╗   ██╗    ██████╗ ██╗  ██╗ ███████╗
+██╔═══██╗██╔═══██╗   ██║  ██║    ██║  ██║    ██╔══██╗╚██╗ ██╔╝    ╚════██╗██║  ██║██╔═══██╗
+██║   ██║██████╔╝   ██║  ██║    ███████║    ██████╔╝ ╚████╔╝      █████╔╝███████║██║   ██║
+██║   ██║██╔══██╗   ╚██╗██╔╝    ╚════██║    ██╔══██╗  ╚██╔╝      ██╔═══╝ ╚██║  ██║██║   ██║
+╚██████╔╝██████╔╝    ╚███╔╝          ██║    ██████╔╝   ██║       ███████╗     ██║╚██████╔╝
 ]]`;
 
             let loader = `local _obf_main = function(...) ${keyDecoys}; local pcall, getfenv, select = pcall, getfenv, select; local env = getfenv and getfenv() or _ENV or _G; local bxor = bit32 and bit32.bxor or function(a,b) local r,p=0,1 while a>0 or b>0 do local x,y=a%2,b%2 if x~=y then r=r+p end a,b=math.floor(a/2),math.floor(b/2) p=p*2 end return r end; local _key_registry = { ${payload} }; local h2 = ""; table.sort(_key_registry, function(a,b) return a.o<b.o end); for _, h7 in ipairs(_key_registry) do if h7.d and h7.d ~= "" then local h8, h9 = h7.d, h7.k; local h10 = h7.s; for h11 = 1, #h8 do local h12 = string.byte(h9, ((h11-1+h10)%#h9)+1); local h13 = string.byte(h9, (((h11-1)*11+h10+7)%#h9)+1); local h14 = (h10+(h11-1)*29+(h11-1)*(h11-1)*17+73)%256; local h15 = bxor(string.byte(h8, h11), h12); h15 = bxor(h15, h13); h15 = bxor(h15, h14); h2 = h2 .. string.char(h15); end end; end; local vm_executor = loadstring or env.loadstring or env.load; local compiled_script, load_err = vm_executor(h2); if not compiled_script then error("VM Execution Error: "..tostring(load_err)); end; return compiled_script(...); end; ${bottomDecoys} return _obf_main(...)`;
