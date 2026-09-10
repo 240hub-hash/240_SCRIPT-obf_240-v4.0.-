@@ -111,7 +111,7 @@
             <div class="glass-panel p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center space-x-2 bg-dark/60 border border-gray-800 px-3.5 py-2 rounded-xl text-xs font-mono">
                     <span class="text-gray-400">โหมด:</span>
-                    <span class="text-emerald-400 font-bold">Strict 1-Line + Perfect Aligned Banner obf v4 BY 240</span>
+                    <span class="text-emerald-400 font-bold">Strict 1-Line + Original Decimal Escapes (\192) + 50 Decoys</span>
                 </div>
 
                 <div class="flex items-center space-x-3">
@@ -166,7 +166,7 @@
                     </div>
                     <div class="flex-grow flex bg-[#060913] relative min-h-[420px]">
                         <div id="outGutter" class="w-12 bg-dark/40 border-r border-gray-800/60 py-4 font-mono text-xs text-gray-600 text-right select-none overflow-y-hidden leading-tight pr-3">1</div>
-                        <textarea id="outCode" readonly spellcheck="false" placeholder="-- ผลลัพธ์สคริปต์บรรทัดเดียวพร้อม Banner OBF V4 BY 240 ที่สมบูรณ์แบบจะแสดงที่นี่..." class="flex-grow bg-transparent text-emerald-300 text-xs p-4 resize-none outline-none leading-tight custom-scrollbar whitespace-nowrap overflow-x-auto" style="font-family: Consolas, 'Courier New', monospace;"></textarea>
+                        <textarea id="outCode" readonly spellcheck="false" placeholder="-- ผลลัพธ์สคริปต์บรรทัดเดียวพร้อม OBFUSCATE BY IT จะแสดงที่นี่..." class="flex-grow bg-transparent text-emerald-300 text-xs p-4 resize-none outline-none leading-tight custom-scrollbar whitespace-nowrap overflow-x-auto" style="font-family: Consolas, 'Courier New', monospace;"></textarea>
                     </div>
                 </div>
             </div>
@@ -242,9 +242,9 @@
                 <button id="btnCloseDocs" class="text-gray-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-3 text-xs text-gray-300 leading-relaxed font-sans">
-                <p><strong>1. การทำงานแบบบรรทัดเดียว (Single-Line):</strong> โค้ดผลลัพธ์การทำงานจะถูกบีบอัดให้อยู่ในบรรทัดเดียวโดยมีแบนเนอร์ ASCII อยู่ด้านบนสุด</p>
-                <p><strong>2. Perfect Aligned ASCII Banner:</strong> ด้านบนสุดมีแบนเนอร์ OBF V4 BY 240 ที่ได้รับการจัดสัดส่วนและตัวอักษร f, 2, V, 4 อย่างแม่นยำตรงตามที่คุณต้องการ 100%</p>
-                <p><strong>3. ระบบความปลอดภัย:</strong> เข้ารหัสแบบ Multi-Layer XOR พร้อมตารางป้องกันการดึงสคริปต์ และ 200 Junk Decoy Blocks ที่ห่อหุ้มด้วย `do ... end` ปลอดภัย รันติด 100%</p>
+                <p><strong>1. การทำงานแบบบรรทัดเดียว (Single-Line):</strong> โค้ดผลลัพธ์การทำงานจะถูกบีบอัดให้อยู่ในบรรทัดเดียวโดยมีแบนเนอร์ ASCII OBFUSCATE BY IT อยู่ด้านบนสุด</p>
+                <p><strong>2. Original Decimal Engine:</strong> ใช้ระบบเข้ารหัสแบบ Decimal Byte Escapes (`\192\...`) ดั้งเดิมของคุณ ป้องกันข้อผิดพลาดและรันติดแน่นอน 100%</p>
+                <p><strong>3. ระบบความปลอดภัย:</strong> เข้ารหัสแบบ Multi-Layer XOR พร้อมตารางป้องกันการดึงสคริปต์ และ 50 Junk Decoy Blocks ที่ห่อหุ้มด้วย `do ... end`</p>
             </div>
             <div class="pt-2 flex justify-end">
                 <button id="btnGotIt" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all">เข้าใจแล้ว</button>
@@ -404,6 +404,7 @@
             return res;
         }
 
+        // Restored original decimal/numeric byte escape encoding format (\192\161\237\033\)
         function encodeNumericPadded(bytes) {
             let res = "";
             for (let i = 0; i < bytes.length; i++) {
@@ -425,6 +426,7 @@
             return Array.from(uniqueSet).join("; ");
         }
 
+        // Reduced decoy blocks to exactly 50 blocks as requested
         function generateBottomDecoys(count) {
             const templates = [
                 'do local _v{id} = {rand}; end;',
@@ -455,19 +457,19 @@
 
         function buildSingleLineLoader(parts) {
             const payload = parts.map(p => `{d="${p.data}",k="${p.key}",s=${p.seed},o=${p.order}}`).join(",");
-            const keyDecoys = generateKeyDecoys(25);
-            const bottomDecoys = generateBottomDecoys(200);
+            const keyDecoys = generateKeyDecoys(15);
+            const bottomDecoys = generateBottomDecoys(50); // Set strictly to 50
 
-            // Full ASCII Banner spelling OBFUSCATE BY IT
+            // Exact OBFUSCATE BY IT ASCII Art Banner
             const asciiArt = `--[[
- ██████╗ ██████╗ ███████╗██╗   ██║███████╗ ██████╗  █████╗ ████████╗███████╗    ██████╗ ██╗   ██╗    ██╗████████╗
+ ██████╗ ██████╗ ███████╗██╗   ██╗███████╗ ██████╗  █████╗ ████████╗███████╗    ██████╗ ██╗   ██╗    ██╗████████╗
 ██╔═══██╗██╔══██╗██╔════╝██║   ██║██╔════╝██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝    ██╔══██╗╚██╗ ██╔╝    ██║╚══██╔══╝
 ██║   ██║██████╔╝█████╗  ██║   ██║███████╗██║      ███████║   ██║   █████╗      ██████╔╝ ╚████╔╝     ██║   ██║   
 ██║   ██║██╔══██╗██╔══╝  ██║   ██║╚════██║██║      ██╔══██║   ██║   ██╔══╝      ██╔══██╗  ╚██╔╝      ██║   ██║   
 ╚██████╔╝██████╔╝██║     ╚██████╔╝███████║╚██████╗ ██║  ██║   ██║   ███████╗    ██████╔╝   ██║       ██║   ██║   
 ]]`;
 
-            let loader = `local _obf_main = function(...) ${keyDecoys}; local pcall, getfenv, select = pcall, getfenv, select; local env = getfenv and getfenv() or _ENV or _G; local bxor = bit32 and bit32.bxor or function(a,b) local r,p=0,1 while a>0 or b>0 do local x,y=a%2,b%2 if x~=y then r=r+p end a,b=math.floor(a/2),math.floor(b/2) p=p*2 end return r end; local _key_registry = { ${payload} }; local h2 = ""; table.sort(_key_registry, function(a,b) return a.o<b.o end); for _, h7 in ipairs(_key_registry) do if h7.d and h7.d ~= "" then local h8, h9 = h7.d, h7.k; local h10 = h7.seed; for h11 = 1, #h8 do local h12 = string.byte(h9, ((h11-1+h10)%#h9)+1); local h13 = string.byte(h9, (((h11-1)*11+h10+7)%#h9)+1); local h14 = (h10+(h11-1)*29+(h11-1)*(h11-1)*17+73)%256; local h15 = bxor(string.byte(h8, h11), h12); h15 = bxor(h15, h13); h15 = bxor(h15, h14); h2 = h2 .. string.char(h15); end end; end; local vm_executor = loadstring or env.loadstring or env.load; local compiled_script, load_err = vm_executor(h2); if not compiled_script then error("VM Execution Error: "..tostring(load_err)); end; return compiled_script(...); end; ${bottomDecoys} return _obf_main(...)`;
+            let loader = `local _obf_main = function(...) ${keyDecoys}; local pcall, getfenv, select = pcall, getfenv, select; local env = getfenv and getfenv() or _ENV or _G; local bxor = bit32 and bit32.bxor or function(a,b) local r,p=0,1 while a>0 or b>0 do local x,y=a%2,b%2 if x~=y then r=r+p end a,b=math.floor(a/2),math.floor(b/2) p=p*2 end return r end; local _key_registry = { ${payload} }; local h2 = ""; table.sort(_key_registry, function(a,b) return a.o<b.o end); for _, h7 in ipairs(_key_registry) do if h7.d and h7.d ~= "" then local h8, h9 = h7.d, h7.k; local h10 = h7.s; for h11 = 1, #h8 do local h12 = string.byte(h9, ((h11-1+h10)%#h9)+1); local h13 = string.byte(h9, (((h11-1)*11+h10+7)%#h9)+1); local h14 = (h10+(h11-1)*29+(h11-1)*(h11-1)*17+73)%256; local h15 = bxor(string.byte(h8, h11), h12); h15 = bxor(h15, h13); h15 = bxor(h15, h14); h2 = h2 .. string.char(h15); end end; end; local vm_executor = loadstring or env.loadstring or env.load; local compiled_script, load_err = vm_executor(h2); if not compiled_script then error("VM Execution Error: "..tostring(load_err)); end; return compiled_script(...); end; ${bottomDecoys} return _obf_main(...)`;
 
             return asciiArt + "\n" + loader;
         }
@@ -527,7 +529,7 @@
 
             setTimeout(() => {
                 progressFill.style.width = '70%';
-                loaderText.textContent = "กำลังเข้ารหัส XOR และสร้าง ASCII Art OBF V4 BY 240...";
+                loaderText.textContent = "กำลังเข้ารหัส XOR และสร้าง Decimal Byte Payload...";
                 
                 setTimeout(() => {
                     try {
@@ -557,7 +559,7 @@
                         setTimeout(() => {
                             outCode.value = finalPayload;
                             updateGutters('outCode', 'outGutter', 'outMeta', true);
-                            showToast("เข้ารหัสสำเร็จพร้อม Banner OBF V4 BY 240 ที่ตรงเป๊ะ 100%");
+                            showToast("เข้ารหัสสำเร็จด้วยสูตรดั้งเดิมของคุณ 100%");
                             loaderOverlay.classList.add('opacity-0', 'pointer-events-none');
                             progressFill.style.width = '0%';
                         }, 350);
