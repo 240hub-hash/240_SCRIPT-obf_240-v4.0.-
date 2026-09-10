@@ -78,7 +78,6 @@
         <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
     </div>
 
-    <!-- Main Container wrapper for DevTools trap toggle -->
     <div id="mainContainer" class="flex flex-col min-h-screen flex-grow relative z-10">
         <header class="border-b border-gray-800/80 bg-darker/80 backdrop-blur-xl sticky top-0 z-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -203,7 +202,7 @@
             </div>
             <div class="space-y-2">
                 <h2 class="text-lg font-extrabold text-white tracking-wide">ตรวจพบความพยายามตรวจสอบระบบ</h2>
-                <p class="text-xs text-gray-400 font-mono leading-relaxed">ระบบความปลอดภัย 240 Studio ได้ระงับหน้าต่างหลักชั่วคราวเนื่องจากตรวจพบการกดปุ่ม F12 หรือคำสั่งตรวจสอบซอร์สโค้ด</p>
+                <p class="text-xs text-gray-400 font-mono leading-relaxed">ระบบความปลอดภัย 240 Studio ได้ระงับหน้าต่างหลักชั่วคราวเนื่องจากตรวจพบการเปิด Developer Tools หรือพยายามตรวจสอบซอร์สโค้ด</p>
             </div>
             <div class="pt-2">
                 <button id="btnReturnMain" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 text-white font-bold text-xs shadow-lg shadow-red-600/20 transition-all flex items-center justify-center space-x-2">
@@ -261,7 +260,7 @@
             return false;
         }, { capture: true });
 
-        // Aggressive DevTools & F12 Shortcut Blocking (Capture Phase everywhere including inputs/textareas)
+        // Aggressive DevTools & F12 Shortcut Blocking (Capture Phase everywhere)
         function checkDevTools(e) {
             if (e.key === 'F12' || 
                 e.keyCode === 123 ||
@@ -277,10 +276,35 @@
         window.addEventListener('keydown', checkDevTools, { capture: true });
         document.addEventListener('keydown', checkDevTools, { capture: true });
 
+        // Advanced DevTools / Sources Tab Inspection Detection using debugger timing & console inspector getters
         function activateTrapScreen() {
             document.getElementById('mainContainer').classList.add('hidden');
             document.getElementById('trapScreen').classList.remove('hidden');
         }
+
+        // Debugger timing detection loop (triggers instantly when DevTools or Sources tab is active and pausing execution)
+        let lastCheck = performance.now();
+        setInterval(function() {
+            const start = performance.now();
+            debugger;
+            const end = performance.now();
+            if (end - start > 100) {
+                activateTrapScreen();
+            }
+        }, 1500);
+
+        // Console inspection getter trap
+        const elementTrap = new Image();
+        Object.defineProperty(elementTrap, 'id', {
+            get: function() {
+                activateTrapScreen();
+                return 'secure_trap';
+            }
+        });
+        setInterval(function() {
+            console.log('%c', elementTrap);
+            console.clear();
+        }, 2000);
 
         document.getElementById('btnReturnMain').addEventListener('click', () => {
             document.getElementById('trapScreen').classList.add('hidden');
@@ -442,7 +466,7 @@
  ██████╗ ███████╗    ██╗  ██╗    ██╗  ██╗    ██████╗ ██╗   ██╗    ██████╗ ██╗  ██╗ ███████╗
 ██╔═══██╗██╔═══██╗   ██║  ██║    ██║  ██║    ██╔══██╗╚██╗ ██╔╝    ╚════██╗██║  ██║██╔═══██╗
 ██║   ██║██████╔╝   ██║  ██║    ███████║    ██████╔╝ ╚████╔╝      █████╔╝███████║██║   ██║
-██║   ██║██╔══██╗   ╚██╗██╔╝    ╚════██║    ██╔══██╗  ╚██╔╝      ██╔═══╝ ╚██║  ██║██║   ██║
+██║   ██║██╔══██╗   ╚██╗██╔╝    ╚════██║    ██╔══██╗  ╚██╔╝      ██╔═══╝ ╚██║  ██║██╔══██╗
 ╚██████╔╝██████╔╝    ╚███╔╝          ██║    ██████╔╝   ██║       ███████╗     ██║╚██████╔╝
 ]]`;
 
